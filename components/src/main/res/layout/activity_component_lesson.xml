@@ -14,24 +14,37 @@
         app:layout_constraintGuide_percent="0.5" />
 
     <TextView
+        android:id="@+id/output_bookmark"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:padding="@dimen/spacing_default"
+        android:textSize="@dimen/text_size_large"
+        android:textColor="@color/accent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:text="Google.com" />
+
+    <TextView
         android:id="@+id/label_status"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:padding="@dimen/spacing_default"
+        android:text="@string/status"
         app:layout_constraintEnd_toStartOf="@id/axis_y"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:text="@string/status" />
+        app:layout_constraintTop_toBottomOf="@id/output_bookmark" />
 
     <TextView
         android:id="@+id/output_status"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:padding="@dimen/spacing_default"
-        android:text="@string/status_inactive"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/axis_y"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/output_bookmark"
+        tools:text="@string/status_inactive"
         tools:textColor="@color/highlight_negative" />
 
     <TextView
@@ -75,9 +88,11 @@
         tools:text="-" />
 
     <ProgressBar
+        android:id="@+id/output_progress"
         style="?android:attr/progressBarStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:visibility="gone"
         app:layout_constraintBottom_toTopOf="@id/btn_run"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
