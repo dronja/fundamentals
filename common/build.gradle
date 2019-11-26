@@ -1,12 +1,11 @@
-apply plugin: 'com.android.application'
+apply plugin: 'com.android.library'
 
 android {
-
     compileSdkVersion 29
     buildToolsVersion "29.0.2"
 
+
     defaultConfig {
-        applicationId "com.itea.practice.fundamentals"
         minSdkVersion 21
         targetSdkVersion 29
         versionCode 1
@@ -25,9 +24,5 @@ android {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
-    implementation project(':common')
-    implementation project(':components')
-
     implementation 'androidx.appcompat:appcompat:1.1.0'
-    implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
 }

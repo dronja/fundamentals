@@ -1,9 +1,9 @@
-package com.itea.practice.fundamentals.startup.menu;
+package com.itea.practice.fundamentals.menu;
 
 import android.content.Context;
 import android.content.Intent;
 
-public class MenuStarter implements Runnable {
+public final class MenuStarter implements Runnable {
     private Context context;
 
     public MenuStarter(Context context) {

@@ -19,4 +19,14 @@
         <item name="android:navigationBarColor">@color/primary</item>
     </style>
 
+    <style name="AppTheme.Btn.Dark" parent="Widget.AppCompat.Button">
+        <item name="android:background">@color/primary</item>
+        <item name="android:textColor">@color/absolutely_light</item>
+    </style>
+
+    <style name="AppTheme.Btn.Light" parent="Widget.AppCompat.Button">
+        <item name="android:background">@color/absolutely_light</item>
+        <item name="android:textColor">@color/primary_dark</item>
+    </style>
+
 </resources>

@@ -10,7 +10,7 @@
     <string name="no_lessons_msg">No lessons found</string>
 
     <string-array name="lessons">
-
+        <item>Components</item>
     </string-array>
 
 </resources>

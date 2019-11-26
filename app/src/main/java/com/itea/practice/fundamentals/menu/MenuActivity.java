@@ -1,4 +1,4 @@
-package com.itea.practice.fundamentals.startup.menu;
+package com.itea.practice.fundamentals.menu;
 
 import android.os.Bundle;
 import android.view.View;
@@ -10,7 +10,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.itea.practice.fundamentals.R;
 
-public class MenuActivity extends AppCompatActivity {
+public final class MenuActivity extends AppCompatActivity {
     private ListAdapter adapter;
     private MenuListener menuListener;
 

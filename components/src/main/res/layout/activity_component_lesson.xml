@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="@dimen/spacing_medium">
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/axis_y"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.5" />
+
+    <TextView
+        android:id="@+id/label_status"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/spacing_default"
+        app:layout_constraintEnd_toStartOf="@id/axis_y"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="@string/status" />
+
+    <TextView
+        android:id="@+id/output_status"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/spacing_default"
+        android:text="@string/status_inactive"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/axis_y"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:textColor="@color/highlight_negative" />
+
+    <TextView
+        android:id="@+id/label_last_value"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/spacing_default"
+        android:text="@string/value_last"
+        app:layout_constraintEnd_toStartOf="@id/axis_y"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/label_status" />
+
+    <TextView
+        android:id="@+id/output_last_value"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/spacing_default"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/axis_y"
+        app:layout_constraintTop_toBottomOf="@id/output_status"
+        tools:text="-" />
+
+    <TextView
+        android:id="@+id/label_common_value"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/spacing_default"
+        android:text="@string/value_common"
+        app:layout_constraintEnd_toStartOf="@id/axis_y"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/label_last_value" />
+
+    <TextView
+        android:id="@+id/output_common_value"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/spacing_default"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/axis_y"
+        app:layout_constraintTop_toBottomOf="@id/output_last_value"
+        tools:text="-" />
+
+    <ProgressBar
+        style="?android:attr/progressBarStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toTopOf="@id/btn_run"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/output_common_value" />
+
+    <Button
+        android:id="@+id/btn_run"
+        style="@style/AppTheme.Btn.Dark"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/spacing_default"
+        android:text="@string/run"
+        app:layout_constraintBottom_toTopOf="@id/btn_run_ones" />
+
+    <Button
+        android:id="@+id/btn_run_ones"
+        style="@style/AppTheme.Btn.Dark"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/spacing_default"
+        android:text="@string/run_ones"
+        app:layout_constraintBottom_toTopOf="@id/btn_stop" />
+
+    <Button
+        android:id="@+id/btn_stop"
+        style="@style/AppTheme.Btn.Dark"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/stop"
+        app:layout_constraintBottom_toBottomOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

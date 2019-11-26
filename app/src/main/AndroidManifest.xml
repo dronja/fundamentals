@@ -13,7 +13,7 @@
         tools:ignore="GoogleAppIndexingWarning">
 
         <activity
-            android:name=".startup.splash.SplashActivity"
+            android:name=".splash.SplashActivity"
             android:theme="@style/AppTheme.Activity.Splash">
 
             <intent-filter>
@@ -23,7 +23,8 @@
 
         </activity>
 
-        <activity android:name=".startup.menu.MenuActivity" />
+        <activity android:name=".menu.MenuActivity" />
+        <activity android:name=".components.ComponentsActivity" />
 
     </application>
 
