@@ -32,6 +32,12 @@ public class PingExecutor {
         @Override
         public void run() {
             while (true) {
+                try {
+                    Thread.sleep(1000L);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
                 long started = System.currentTimeMillis();
 
                 try {
