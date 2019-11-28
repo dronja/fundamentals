@@ -1,18 +1,15 @@
 package com.itea.practice.fundamentals.components.service;
 
-import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
 import android.util.Log;
 
 import androidx.annotation.Nullable;
 
-import com.itea.practice.components.data.PingExecutor;
+import com.itea.practice.components.model.PingLog;
+import com.itea.practice.components.service.PingServiceBase;
 
-public class PingService extends Service {
-    private final PingExecutor executor = new PingExecutor();
-    private final PingCallback callback = new PingCallback();
-
+public class PingService extends PingServiceBase {
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
@@ -36,9 +33,17 @@ public class PingService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.d("temp_log", "start command");
-        this.executor.execute(this.callback, "8.8.8.8");
-
         return START_NOT_STICKY;
+    }
+
+    @Override
+    protected void onResult(PingLog result) {
+        Log.d(
+                "temp_log",
+                result.isSuccessful()
+                        ? "Success"
+                        : "Error"
+        );
     }
 
     @Override
@@ -51,21 +56,9 @@ public class PingService extends Service {
     @Override
     public void onDestroy() {
         Log.d("temp_log", "destroy");
-        executor.interrupt();
+        interrupt();
 
         super.onDestroy();
-    }
-
-    private final class PingCallback implements PingExecutor.CallBack {
-        @Override
-        public void onSuccess(long started, long finished) {
-            Log.d("temp_log", "success");
-        }
-
-        @Override
-        public void onFailure(long started, long finished) {
-            Log.d("temp_log", "error");
-        }
     }
 
 }

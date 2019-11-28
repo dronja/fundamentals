@@ -9,8 +9,12 @@ public class PingBinder extends Binder {
         this.pingService = pingService;
     }
 
-    public void run(){
+    public void interrupt() {
+        this.pingService.interrupt();
+    }
 
+    public void run() {
+        this.pingService.run();
     }
 
 }

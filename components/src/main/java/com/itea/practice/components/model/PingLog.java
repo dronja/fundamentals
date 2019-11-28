@@ -1,19 +1,17 @@
 package com.itea.practice.components.model;
 
-import java.util.Calendar;
-
 public class PingLog {
     private boolean result;
     private long duration;
-    private Calendar date;
+    private long date;
 
-    public PingLog(boolean result, long duration, Calendar date) {
+    public PingLog(boolean result, long duration, long date) {
         this.result = result;
         this.duration = duration;
         this.date = date;
     }
 
-    public boolean isResult() {
+    public boolean isSuccessful() {
         return result;
     }
 
@@ -21,7 +19,7 @@ public class PingLog {
         return duration;
     }
 
-    public Calendar getDate() {
+    public long getDate() {
         return date;
     }
 

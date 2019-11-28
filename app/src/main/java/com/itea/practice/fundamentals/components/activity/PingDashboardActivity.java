@@ -1,33 +1,50 @@
-package com.itea.practice.fundamentals.components.presentation;
+package com.itea.practice.fundamentals.components.activity;
 
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.util.Log;
+import android.os.PersistableBundle;
 
 import androidx.annotation.Nullable;
 
+import com.itea.practice.components.presentation.BookmarksActivity;
 import com.itea.practice.components.presentation.PingDashboardActivityBase;
 import com.itea.practice.components.R;
+import com.itea.practice.fundamentals.components.service.PingBinder;
 import com.itea.practice.fundamentals.components.service.PingService;
 
 public class PingDashboardActivity extends PingDashboardActivityBase implements ServiceConnection {
+    private PingBinder binder;
+
+    private void bind() {
+        this.bindService(new Intent(this, PingService.class), this, 0);
+    }
 
     @Override
-    protected void chooseBookmark() {
+    public void onCreate(@Nullable Bundle savedInstanceState, @Nullable PersistableBundle persistentState) {
+        super.onCreate(savedInstanceState, persistentState);
 
+        this.bind();
+    }
+
+    @Override
+    protected void showStats() {
+        this.startActivity(new Intent(this, BookmarksActivity.class));
     }
 
     @Override
     protected void startPingService() {
         this.startService(new Intent(this, PingService.class));
-        this.bindService(new Intent(this, PingService.class), this, 0);
+        this.bind();
     }
 
     @Override
     protected void stopPingService() {
+        super.stopPingService();
+
+        this.binder.interrupt();
         this.unbindService(this);
         this.stopService(new Intent(this, PingService.class));
     }
@@ -40,12 +57,15 @@ public class PingDashboardActivity extends PingDashboardActivityBase implements 
 
     @Override
     public void onServiceConnected(ComponentName name, IBinder service) {
-        Log.d("temp_log", "connected");
+        this.binder = (PingBinder) service;
+        this.binder.run();
+
+        super.notifyPingRunning();
     }
 
     @Override
     public void onServiceDisconnected(ComponentName name) {
-        Log.d("temp_log", "disconnected");
+        super.notifyPingStopped();
     }
 
 }
