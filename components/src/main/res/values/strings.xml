@@ -8,6 +8,6 @@
     <string name="value_common">Common value:</string>
 
     <string name="run">Run</string>
-    <string name="run_ones">Run ones</string>
+    <string name="stats">Statistic</string>
     <string name="stop">Stop</string>
 </resources>
