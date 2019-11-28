@@ -1,4 +1,4 @@
-package com.itea.practice.fundamentals.menu;
+package com.itea.practice.fundamentals.start.menu;
 
 import android.content.Context;
 import android.content.Intent;

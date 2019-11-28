@@ -3,8 +3,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.itea.practice.fundamentals">
 
-    <uses-permission android:name="android.permission.INTERNET" />
-
     <application
         android:allowBackup="false"
         android:icon="@mipmap/ic_launcher"
@@ -14,10 +12,8 @@
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
 
-        <service android:name=".components.service.PingService" />
-
         <activity
-            android:name=".splash.SplashActivity"
+            android:name=".start.splash.SplashActivity"
             android:noHistory="true"
             android:theme="@style/AppTheme.Activity.Splash">
 
@@ -28,8 +24,7 @@
 
         </activity>
 
-        <activity android:name=".menu.MenuActivity" />
-        <activity android:name=".components.activity.PingDashboardActivity" />
+        <activity android:name=".start.menu.MenuActivity" />
 
     </application>
 

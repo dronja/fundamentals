@@ -1,4 +1,4 @@
-package com.itea.practice.fundamentals.splash;
+package com.itea.practice.fundamentals.start.splash;
 
 import android.os.Bundle;
 import android.os.Handler;
@@ -6,7 +6,7 @@ import android.os.Handler;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.itea.practice.fundamentals.R;
-import com.itea.practice.fundamentals.menu.MenuStarter;
+import com.itea.practice.fundamentals.start.menu.MenuStarter;
 
 @SuppressWarnings("FieldCanBeLocal")
 public final class SplashActivity extends AppCompatActivity {

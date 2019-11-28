@@ -1,16 +1,8 @@
 <resources>
     <string name="app_name">Fundamentals</string>
 
-    <!--Splash-->
-    <string name="splash_title">Android</string>
-    <string name="splash_subtitle">Base</string>
-    <string name="splash_topic">Fundamentals</string>
-
-    <!--Menu-->
-    <string name="no_lessons_msg">No lessons found</string>
-
     <string-array name="lessons">
-        <item>Components</item>
+
     </string-array>
 
 </resources>
