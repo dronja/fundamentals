@@ -4,7 +4,7 @@ import android.os.Bundle;
 
 import androidx.annotation.Nullable;
 
-import com.itea.practice.components.activity.PingDashboardActivityBase;
+import com.itea.practice.components.presentation.PingDashboardActivityBase;
 import com.itea.practice.components.R;
 
 public class PingDashboardActivity extends PingDashboardActivityBase {

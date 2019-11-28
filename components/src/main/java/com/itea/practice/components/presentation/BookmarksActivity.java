@@ -1,4 +1,4 @@
-package com.itea.practice.components.activity;
+package com.itea.practice.components.presentation;
 
 import android.database.Cursor;
 import android.net.Uri;
