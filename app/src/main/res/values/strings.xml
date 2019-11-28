@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">Fundamentals</string>
-
+    <string name="history">History</string>
     <string-array name="lessons">
         <item>Components</item>
     </string-array>
