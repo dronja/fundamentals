@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.os.PersistableBundle;
 
 import androidx.annotation.Nullable;
 
@@ -23,8 +22,8 @@ public class PingDashboardActivity extends PingDashboardActivityBase implements 
     }
 
     @Override
-    public void onCreate(@Nullable Bundle savedInstanceState, @Nullable PersistableBundle persistentState) {
-        super.onCreate(savedInstanceState, persistentState);
+    protected void onResume() {
+        super.onResume();
 
         this.bind();
     }
@@ -53,6 +52,13 @@ public class PingDashboardActivity extends PingDashboardActivityBase implements 
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         super.setContentView(R.layout.activity_component_lesson);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        this.unbindService(this);
     }
 
     @Override

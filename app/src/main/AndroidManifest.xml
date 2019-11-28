@@ -30,7 +30,6 @@
 
         <activity android:name=".menu.MenuActivity" />
         <activity android:name=".components.activity.PingDashboardActivity" />
-        <activity android:name=".components.activity.PingStatsActivity"/>
 
     </application>
 

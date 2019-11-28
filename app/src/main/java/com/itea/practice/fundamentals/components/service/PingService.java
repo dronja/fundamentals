@@ -38,12 +38,7 @@ public class PingService extends PingServiceBase {
 
     @Override
     protected void onResult(PingLog result) {
-        Log.d(
-                "temp_log",
-                result.isSuccessful()
-                        ? "Success"
-                        : "Error"
-        );
+
     }
 
     @Override

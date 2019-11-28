@@ -42,10 +42,13 @@ public class PingExecutor {
 
                 try {
 
+                    if (address == null) continue;
                     Process process = Runtime.getRuntime().exec("/system/bin/ping -c 1 " + address);
-                    int result = process.waitFor();
 
+                    int result = process.waitFor();
                     long finished = System.currentTimeMillis();
+
+                    if (callBack.get() == null) continue;
                     if (result == 0) {
                         callBack.get().onSuccess(started, finished);
                     } else {
