@@ -16,7 +16,14 @@ public class PingService extends Service {
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
-        return null;
+        Log.d("temp_log", "bind");
+        return new PingBinder(this);
+    }
+
+    @Override
+    public boolean onUnbind(Intent intent) {
+        Log.d("temp_log", "unbind");
+        return super.onUnbind(intent);
     }
 
     @Override
@@ -28,6 +35,7 @@ public class PingService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        Log.d("temp_log", "start command");
         this.executor.execute(this.callback, "8.8.8.8");
 
         return START_NOT_STICKY;
@@ -42,10 +50,10 @@ public class PingService extends Service {
 
     @Override
     public void onDestroy() {
-        super.onDestroy();
-
         Log.d("temp_log", "destroy");
         executor.interrupt();
+
+        super.onDestroy();
     }
 
     private final class PingCallback implements PingExecutor.CallBack {

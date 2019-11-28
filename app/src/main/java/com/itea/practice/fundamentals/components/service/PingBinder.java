@@ -1,4 +1,16 @@
 package com.itea.practice.fundamentals.components.service;
 
-public class PingBinder {
+import android.os.Binder;
+
+public class PingBinder extends Binder {
+    private PingService pingService;
+
+    PingBinder(PingService pingService) {
+        this.pingService = pingService;
+    }
+
+    public void run(){
+
+    }
+
 }
