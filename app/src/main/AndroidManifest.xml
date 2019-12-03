@@ -23,9 +23,8 @@
             </intent-filter>
 
         </activity>
-
         <activity android:name=".start.menu.MenuActivity" />
-        <activity android:name=".PingDashboardActivity" />
+
 
     </application>
 
