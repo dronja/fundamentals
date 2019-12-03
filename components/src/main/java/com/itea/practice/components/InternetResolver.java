@@ -1,4 +1,4 @@
-package com.itea.practice.components.data;
+package com.itea.practice.components;
 
 import android.content.Context;
 import android.net.ConnectivityManager;

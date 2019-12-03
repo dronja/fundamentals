@@ -1,4 +1,4 @@
-package com.itea.practice.components.data;
+package com.itea.practice.components;
 
 import java.io.IOException;
 import java.util.concurrent.atomic.AtomicReference;

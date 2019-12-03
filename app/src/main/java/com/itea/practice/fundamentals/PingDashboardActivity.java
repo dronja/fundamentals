@@ -5,18 +5,30 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.drawable.Drawable;
+import android.os.Bundle;
 import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
 
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
-import com.itea.practice.components.presentation.PingDashboardActivityBase;
+import com.itea.practice.components.InternetResolver;
 
 import java.util.Objects;
 
-public class PingDashboardActivity extends PingDashboardActivityBase {
+public class PingDashboardActivity extends AppCompatActivity {
 
-    @Override
-    protected void updateState(boolean isActive) {
+    private InternetResolver resolver;
+
+    private ImageView tumblerBtn;
+    private View historyBtn;
+    private TextView outputConnection;
+    private TextView outputStatus;
+    private TextView outputDelay;
+
+    private void updateState(boolean isActive) {
         Drawable icon = Objects.requireNonNull(ContextCompat.getDrawable(this, com.itea.practice.components.R.drawable.ic_tumbler)).mutate();
         icon.setTint(
                 ContextCompat.getColor(
@@ -48,6 +60,33 @@ public class PingDashboardActivity extends PingDashboardActivityBase {
         );
     }
 
+    private void start() {
+
+    }
+
+    private void stop() {
+
+    }
+
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        Objects.requireNonNull(this.getSupportActionBar()).setTitle(com.itea.practice.components.R.string.title);
+        this.setContentView(com.itea.practice.components.R.layout.activity_ping_dashboard);
+
+        this.resolver = new InternetResolver(this);
+
+        this.outputConnection = findViewById(com.itea.practice.components.R.id.output_connection);
+        this.outputStatus = findViewById(com.itea.practice.components.R.id.output_status);
+        this.outputDelay = findViewById(com.itea.practice.components.R.id.output_delay);
+
+        this.tumblerBtn = findViewById(com.itea.practice.components.R.id.btn_tumbler);
+        this.historyBtn = findViewById(com.itea.practice.components.R.id.btn_history);
+
+        this.outputStatus = this.findViewById(com.itea.practice.components.R.id.output_status);
+    }
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -65,21 +104,8 @@ public class PingDashboardActivity extends PingDashboardActivityBase {
                 },
                 filter
         );
-    }
 
-    @Override
-    protected void start() {
-
-    }
-
-    @Override
-    protected void stop() {
-
-    }
-
-    @Override
-    protected void navigateHistory() {
-
+        updateState(true);
     }
 
 }

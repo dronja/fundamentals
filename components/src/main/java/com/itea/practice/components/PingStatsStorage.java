@@ -1,10 +1,9 @@
-package com.itea.practice.components.data;
+package com.itea.practice.components;
 
 import android.content.Context;
 import android.content.SharedPreferences;
 
 import com.google.gson.Gson;
-import com.itea.practice.components.model.PingLog;
 
 import java.util.ArrayList;
 import java.util.Arrays;
