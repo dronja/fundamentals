@@ -9,7 +9,7 @@ import androidx.annotation.Nullable;
 import java.util.Objects;
 
 public class InternetResolver {
-    public final static String ACTION = "android.net.conn.CONNECTIVITY_CHANGE";
+
     private ConnectivityManager manager;
 
     public InternetResolver(Context context) {

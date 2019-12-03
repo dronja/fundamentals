@@ -2,7 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="com.itea.practice.fundamentals">
-
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.INTERNET"/>
     <application
         android:allowBackup="false"
         android:icon="@mipmap/ic_launcher"
@@ -11,7 +12,17 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".task.PingDashboardActivity"></activity>
+<!--        <receiver-->
+<!--            android:name=".task.InternetReceiver"-->
+<!--            android:enabled="true"-->
+<!--            android:exported="true">-->
+<!--            <intent-filter>-->
+<!--                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />-->
+<!--                <action android:name="android.net.wifi.WIFI_STATE_CHANGED" />-->
+<!--            </intent-filter>-->
+<!--        </receiver>-->
+
+        <activity android:name=".task.PingDashboardActivity" />
         <activity
             android:name=".start.splash.SplashActivity"
             android:noHistory="true"
