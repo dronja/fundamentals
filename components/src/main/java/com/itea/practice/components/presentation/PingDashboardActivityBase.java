@@ -1,10 +1,12 @@
 package com.itea.practice.components.presentation;
 
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.os.PersistableBundle;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
-import androidx.annotation.CallSuper;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
@@ -15,23 +17,35 @@ import java.util.Objects;
 
 public abstract class PingDashboardActivityBase extends AppCompatActivity {
 
-    private final View.OnClickListener clickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            if (view.equals(btnStats)) PingDashboardActivityBase.this.showStats();
-            if (view.equals(btnRun)) PingDashboardActivityBase.this.startPingService();
-            if (view.equals(btnStop)) PingDashboardActivityBase.this.stopPingService();
-        }
-    };
-
-    private View btnStats;
-    private View btnRun;
-    private View btnStop;
+    private ImageView tumblerBtn;
+    private View historyBtn;
+    private TextView outputConnection;
     private TextView outputStatus;
+    private TextView outputDelay;
 
-    private void update(boolean isPingRunning) {
-        this.btnRun.setEnabled(!isPingRunning);
-        this.btnStop.setEnabled(isPingRunning);
+    private void updateState(boolean isPingRunning) {
+
+        Drawable icon = Objects.requireNonNull(ContextCompat.getDrawable(this, R.drawable.ic_tumbler)).mutate();
+        icon.setTint(
+                ContextCompat.getColor(
+                        this,
+                        isPingRunning ? R.color.highlight_positive : R.color.highlight_negative)
+        );
+
+        this.tumblerBtn.setImageDrawable(icon);
+        this.tumblerBtn.setOnClickListener(
+                isPingRunning ? new View.OnClickListener() {
+                    @Override
+                    public void onClick(View ignored) {
+                        PingDashboardActivityBase.this.stop();
+                    }
+                } : new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        PingDashboardActivityBase.this.start();
+                    }
+                }
+        );
 
         this.outputStatus.setText(
                 getString(
@@ -46,27 +60,16 @@ public abstract class PingDashboardActivityBase extends AppCompatActivity {
                         this,
                         isPingRunning
                                 ? R.color.highlight_positive
-                                : R.color.highlight_negative
+                                : R.color.highlight_inactive
                 )
         );
     }
 
-    protected abstract void showStats();
+    protected abstract void start();
 
-    protected abstract void startPingService();
+    protected abstract void stop();
 
-    @CallSuper
-    protected void stopPingService() {
-        this.notifyPingStopped();
-    }
-
-    protected void notifyPingRunning() {
-        this.update(true);
-    }
-
-    protected void notifyPingStopped() {
-        this.update(false);
-    }
+    protected abstract void navigateHistory();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -76,17 +79,17 @@ public abstract class PingDashboardActivityBase extends AppCompatActivity {
     }
 
     @Override
+    public void onCreate(@Nullable Bundle savedInstanceState, @Nullable PersistableBundle persistentState) {
+        super.onCreate(savedInstanceState, persistentState);
+        super.setContentView(R.layout.activity_ping_dashboard);
+    }
+
+    @Override
     protected void onPostCreate(@Nullable Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
 
-        this.btnStats = this.findViewById(R.id.btn_stats);
-        this.btnStats.setOnClickListener(this.clickListener);
-
-        this.btnRun = this.findViewById(R.id.btn_run);
-        this.btnRun.setOnClickListener(this.clickListener);
-
-        this.btnStop = this.findViewById(R.id.btn_stop);
-        this.btnStop.setOnClickListener(this.clickListener);
+        this.tumblerBtn = findViewById(R.id.btn_tumbler);
+        this.historyBtn = findViewById(R.id.btn_history);
 
         this.outputStatus = this.findViewById(R.id.output_status);
     }
@@ -95,7 +98,7 @@ public abstract class PingDashboardActivityBase extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
 
-        this.update(false);
+        this.updateState(false);
     }
 
 }
