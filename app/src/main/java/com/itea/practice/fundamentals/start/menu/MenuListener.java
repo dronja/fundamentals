@@ -1,7 +1,6 @@
 package com.itea.practice.fundamentals.start.menu;
 
 import android.content.Context;
-import android.content.Intent;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -13,7 +12,7 @@ public final class MenuListener implements View.OnClickListener {
 
         switch (((ViewGroup) view.getParent()).indexOfChild(view)) {
             case 0:
-                context.startActivity(new Intent(context, PingDashboardActivity.class));
+
                 break;
         }
     }
