@@ -92,7 +92,7 @@
         android:id="@+id/btn_history"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:background="@color/accent"
+        android:background="@color/primary_dark"
         android:text="@string/history"
         android:textColor="@color/absolutely_light"
         app:layout_constraintBottom_toBottomOf="parent"

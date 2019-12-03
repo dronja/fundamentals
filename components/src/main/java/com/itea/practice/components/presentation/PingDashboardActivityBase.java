@@ -23,18 +23,27 @@ public abstract class PingDashboardActivityBase extends AppCompatActivity {
     private TextView outputStatus;
     private TextView outputDelay;
 
-    private void updateState(boolean isPingRunning) {
+    protected abstract void start();
 
+    protected abstract void stop();
+
+    protected abstract void navigateHistory();
+
+    protected void updateConnection(@Nullable String type) {
+        this.outputConnection.setText(type == null ? getString(R.string.connection_none) : type);
+    }
+
+    protected void updateState(boolean isActive) {
         Drawable icon = Objects.requireNonNull(ContextCompat.getDrawable(this, R.drawable.ic_tumbler)).mutate();
         icon.setTint(
                 ContextCompat.getColor(
                         this,
-                        isPingRunning ? R.color.highlight_positive : R.color.highlight_negative)
+                        isActive ? R.color.highlight_positive : R.color.highlight_negative)
         );
 
         this.tumblerBtn.setImageDrawable(icon);
         this.tumblerBtn.setOnClickListener(
-                isPingRunning ? new View.OnClickListener() {
+                isActive ? new View.OnClickListener() {
                     @Override
                     public void onClick(View ignored) {
                         PingDashboardActivityBase.this.stop();
@@ -49,7 +58,7 @@ public abstract class PingDashboardActivityBase extends AppCompatActivity {
 
         this.outputStatus.setText(
                 getString(
-                        isPingRunning
+                        isActive
                                 ? R.string.status_active
                                 : R.string.status_inactive
                 )
@@ -58,47 +67,28 @@ public abstract class PingDashboardActivityBase extends AppCompatActivity {
         this.outputStatus.setTextColor(
                 ContextCompat.getColor(
                         this,
-                        isPingRunning
+                        isActive
                                 ? R.color.highlight_positive
                                 : R.color.highlight_inactive
                 )
         );
     }
 
-    protected abstract void start();
-
-    protected abstract void stop();
-
-    protected abstract void navigateHistory();
-
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        Objects.requireNonNull(getSupportActionBar()).setTitle(R.string.title);
-    }
+        Objects.requireNonNull(this.getSupportActionBar()).setTitle(R.string.title);
+        this.setContentView(R.layout.activity_ping_dashboard);
 
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState, @Nullable PersistableBundle persistentState) {
-        super.onCreate(savedInstanceState, persistentState);
-        super.setContentView(R.layout.activity_ping_dashboard);
-    }
-
-    @Override
-    protected void onPostCreate(@Nullable Bundle savedInstanceState) {
-        super.onPostCreate(savedInstanceState);
+        this.outputConnection = findViewById(R.id.output_connection);
+        this.outputStatus = findViewById(R.id.output_status);
+        this.outputDelay = findViewById(R.id.output_delay);
 
         this.tumblerBtn = findViewById(R.id.btn_tumbler);
         this.historyBtn = findViewById(R.id.btn_history);
 
         this.outputStatus = this.findViewById(R.id.output_status);
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-
-        this.updateState(false);
     }
 
 }
