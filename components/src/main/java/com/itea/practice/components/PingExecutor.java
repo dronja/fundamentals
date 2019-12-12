@@ -10,6 +10,8 @@ public class PingExecutor {
     private final Action action = new Action();
     private final Thread worker = new Thread(this.action);
 
+    private boolean isActive;
+
     public void execute(CallBack callBack, String address) {
         if (worker.isAlive() && !worker.isInterrupted()) return;
 
@@ -17,6 +19,10 @@ public class PingExecutor {
         this.address.set(address);
 
         this.worker.start();
+        isActive = true;
+    }
+    public boolean isStarted(){
+        return this.isActive;
     }
 
     public void interrupt() {
@@ -26,12 +32,13 @@ public class PingExecutor {
 
         this.callBack.set(null);
         this.address.set(null);
+        isActive = false;
     }
 
     private class Action implements Runnable {
         @Override
         public void run() {
-            while (true) {
+            while (isActive) {
                 try {
                     Thread.sleep(1000L);
                 } catch (InterruptedException e) {

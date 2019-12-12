@@ -24,6 +24,7 @@ import java.util.List;
 
 public class PingDashboardActivity extends AppCompatActivity implements InternetReceiver.Listener{
     public final static String ACTION = "android.net.conn.CONNECTIVITY_CHANGE";
+    private String netType;
     private final String KEY_STATE = "state.connection";
     private final String KEY_DELAY = "state.delay";
     private final String KEY_STATUS = "state.status";
@@ -38,6 +39,13 @@ public class PingDashboardActivity extends AppCompatActivity implements Internet
             ouputDelay.setText(String.valueOf(log.getDuration()));
         }
     };
+    private PingBinder.ExecutionTypeListener typeListener = new PingBinder.ExecutionTypeListener() {
+        @Override
+        public void onStatusChange(boolean state) {
+
+            outputStatus.setText(getString(state?R.string.status_active:R.string.status_inactive));
+        }
+    };
     private ImageView ivTumbler;
     InternetReceiver receiver;
     private ServiceConnection serviceConnection = new ServiceConnection() {
@@ -45,7 +53,9 @@ public class PingDashboardActivity extends AppCompatActivity implements Internet
         public void onServiceConnected(ComponentName name, IBinder binder) {
             PingDashboardActivity.this.pingBinder = (PingBinder)binder;
             PingDashboardActivity.this.pingBinder.setOnPingListener(pingListener);
+            PingDashboardActivity.this.pingBinder.setTypeListener(typeListener);
             changeIndicatorColor(R.color.accent);
+            pingBinder.startPingProcess();
         }
 
         @Override
@@ -79,11 +89,14 @@ public class PingDashboardActivity extends AppCompatActivity implements Internet
                 if(PingDashboardActivity.this.pingBinder == null) {
                     PingDashboardActivity.this.startService(intent);
                     PingDashboardActivity.this.bindService(intent, PingDashboardActivity.this.serviceConnection, 0);
+
                 }else{
+                    pingBinder.stopPingService();
                     PingDashboardActivity.this.unbindService(PingDashboardActivity.this.serviceConnection);
                     PingDashboardActivity.this.pingBinder = null;
                     PingDashboardActivity.this.stopService(intent);
                     changeIndicatorColor(R.color.highlight_inactive);
+
                 }
             }
         });
@@ -108,6 +121,14 @@ public class PingDashboardActivity extends AppCompatActivity implements Internet
 
         this.receiver.addListener(this);
 
+        if(isServiceRunning())
+            bindService(new Intent(this, PingService.class), serviceConnection, 0);
+
+
+
+    }
+
+    private boolean isServiceRunning(){
         ActivityManager manager = (ActivityManager)getSystemService(Context.ACTIVITY_SERVICE);
 
         assert manager != null;
@@ -115,11 +136,10 @@ public class PingDashboardActivity extends AppCompatActivity implements Internet
 
         for(ActivityManager.RunningServiceInfo info : listRunning){
             if(info.service.getClassName().equalsIgnoreCase(PingService.class.getName())){
-                bindService(new Intent(this, PingService.class), serviceConnection, 0);
-                break;
+                return true;
             }
         }
-
+        return false;
     }
 
     @Override
@@ -127,8 +147,10 @@ public class PingDashboardActivity extends AppCompatActivity implements Internet
         super.onPause();
         this.receiver.removeListener(this);
         this.unregisterReceiver(receiver);
-        this.unbindService(serviceConnection);
+        if(isServiceRunning())
+            this.unbindService(serviceConnection);
     }
+
 
     @Override
     protected void onSaveInstanceState(@NonNull Bundle state) {
@@ -172,6 +194,25 @@ public class PingDashboardActivity extends AppCompatActivity implements Internet
 
     @Override
     public void onInternetChanged(@Nullable String type) {
+        //TODO fix this code and replace on listener
+       /* boolean isActive = pingBinder.isStarted();
+
+
+        if(type == null && netType == null){
+            return;
+        }
+        if(type == null){
+            pingBinder.stopPingService();
+        }
+
+
+        if(pingBinder == null)return;
+        if(type == null){
+            pingBinder.stopPingService();
+        }else{
+            pingBinder.startPingProcess();
+        }*/
+
         outputTv.setText(
                 type==null?getString(R.string.connection_none):type
         );

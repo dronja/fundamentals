@@ -11,6 +11,7 @@ import com.itea.practice.components.PingLog;
 //IntentService - one time service
 public class PingService extends Service {
     String TAG = "pingService";
+
     private PingExecutor pingExecutor;
     private PingBinder pingBinder;
     private PingExecutor.CallBack callBack = new PingExecutor.CallBack() {
@@ -35,7 +36,24 @@ public class PingService extends Service {
     public IBinder onBind(Intent intent) {
         Log.d(TAG, "Bind");
         if(pingBinder == null){
-            pingBinder = new PingBinder();
+            pingBinder = new PingBinder() {
+                @Override
+                void startPingProcess() {
+                    super.startPingProcess();
+                    pingExecutor.execute(callBack, "8.8.8.8");
+                }
+
+                @Override
+                void stopPingService() {
+                    super.stopPingService();
+                    pingExecutor.interrupt();
+                }
+
+                @Override
+                boolean isStarted() {
+                    return pingExecutor.isStarted();
+                }
+            };
         }
        return pingBinder;
     }
@@ -52,14 +70,14 @@ public class PingService extends Service {
         Log.d(TAG, "Create");
         super.onCreate();
         pingExecutor = new PingExecutor();
-        pingExecutor.execute(callBack, "8.8.8.8" );
+
     }
 
     @Override
     public void onDestroy() {
         Log.d(TAG, "Destroy");
         super.onDestroy();
-        pingExecutor.interrupt();
+
     }
 
     @Override
