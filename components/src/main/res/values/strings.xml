@@ -8,5 +8,6 @@
     <string name="status_inactive">Inactive</string>
     <string name="delay">Delay:</string>
     <string name="history">History</string>
+    <string name="unactive">unactive</string>
 
 </resources>

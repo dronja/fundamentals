@@ -2,15 +2,11 @@ package com.itea.practice.fundamentals.task;
 
 import android.app.Service;
 import android.content.Intent;
-import android.os.Binder;
 import android.os.IBinder;
 import android.util.Log;
 
 import com.itea.practice.components.PingExecutor;
 import com.itea.practice.components.PingLog;
-
-import java.util.ArrayList;
-import java.util.List;
 
 //IntentService - one time service
 public class PingService extends Service {
@@ -21,12 +17,14 @@ public class PingService extends Service {
         @Override
         public void onSuccess(long started, long finished) {
             Log.d(TAG, "Success");
+            if(pingBinder != null)
            pingBinder.onPing(new PingLog(true, finished-started,started));
         }
 
         @Override
         public void onFailure(long started, long finished) {
             Log.d(TAG, "Failure");
+            if(pingBinder != null)
             pingBinder.onPing(new PingLog(false, finished-started, started));
         }
     };
@@ -36,14 +34,16 @@ public class PingService extends Service {
     @Override
     public IBinder onBind(Intent intent) {
         Log.d(TAG, "Bind");
-        pingBinder = new PingBinder();
+        if(pingBinder == null){
+            pingBinder = new PingBinder();
+        }
        return pingBinder;
     }
 
     @Override
     public boolean onUnbind(Intent intent) {
         Log.d(TAG, "Unbind");
-        pingBinder = null;
+
         return super.onUnbind(intent);
     }
 

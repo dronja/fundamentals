@@ -31,7 +31,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/axis_y"
         app:layout_constraintTop_toTopOf="parent"
-        tools:text="WiFi" />
+        android:text="@string/connection_none" />
 
     <TextView
         android:id="@+id/label_status"
@@ -53,7 +53,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/axis_y"
         app:layout_constraintTop_toBottomOf="@id/output_connection"
-        tools:text="@string/status_active" />
+        android:text="@string/unactive" />
 
     <TextView
         android:id="@+id/label_delay"
@@ -74,6 +74,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/axis_y"
         app:layout_constraintTop_toBottomOf="@id/output_status"
+        android:text="0"
         tools:text="24ms" />
 
     <ImageView
