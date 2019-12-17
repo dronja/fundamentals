@@ -14,11 +14,12 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
+        <activity android:name=".task.PingHistoryActivity"></activity>
+
         <service
             android:name=".task.PingService"
             android:enabled="true"
-            android:exported="false"></service>
-        <!-- <receiver -->
+            android:exported="false" /> <!-- <receiver -->
         <!-- android:name=".task.InternetReceiver" -->
         <!-- android:enabled="true" -->
         <!-- android:exported="true"> -->
@@ -34,10 +35,15 @@
             android:theme="@style/AppTheme.Activity.Splash">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity android:name=".start.menu.MenuActivity" />
+        <provider
+            android:authorities="com.itea.practice.fundamentals.ping"
+            android:name=".task.PingHistoryProvider"
+            android:exported="false"/>
     </application>
 
 </manifest>

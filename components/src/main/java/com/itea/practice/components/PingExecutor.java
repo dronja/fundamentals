@@ -7,12 +7,13 @@ public class PingExecutor {
     private volatile AtomicReference<String> address = new AtomicReference<>();
     private volatile AtomicReference<CallBack> callBack = new AtomicReference<>();
 
-    private final Action action = new Action();
-    private final Thread worker = new Thread(this.action);
+    //private final Action action = new Action();
+    private Thread worker;
 
     private boolean isActive;
 
     public void execute(CallBack callBack, String address) {
+        this.worker = new Thread(new Action());
         if (worker.isAlive() && !worker.isInterrupted()) return;
 
         this.callBack.set(callBack);
