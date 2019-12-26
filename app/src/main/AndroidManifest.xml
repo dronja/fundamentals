@@ -3,9 +3,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.itea.practice.fundamentals">
 
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.INTERNET" />
-
     <application
         android:allowBackup="false"
         android:icon="@mipmap/ic_launcher"
@@ -14,21 +11,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".task.PingHistoryActivity"></activity>
 
-        <service
-            android:name=".task.PingService"
-            android:enabled="true"
-            android:exported="false" /> <!-- <receiver -->
-        <!-- android:name=".task.InternetReceiver" -->
-        <!-- android:enabled="true" -->
-        <!-- android:exported="true"> -->
-        <!-- <intent-filter> -->
-        <!-- <action android:name="android.net.conn.CONNECTIVITY_CHANGE" /> -->
-        <!-- <action android:name="android.net.wifi.WIFI_STATE_CHANGED" /> -->
-        <!-- </intent-filter> -->
-        <!-- </receiver> -->
-        <activity android:name=".task.PingDashboardActivity" />
         <activity
             android:name=".start.splash.SplashActivity"
             android:noHistory="true"
@@ -39,11 +22,21 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <activity android:name=".start.menu.MenuActivity" />
+        <activity android:name=".task.PingDashboardActivity" />
+        <activity android:name=".task.PingHistoryActivity" />
+
+        <service
+            android:name=".task.PingService"
+            android:enabled="true"
+            android:exported="false" />
+
         <provider
-            android:authorities="com.itea.practice.fundamentals.ping"
             android:name=".task.PingHistoryProvider"
-            android:exported="false"/>
+            android:authorities="com.itea.practice.fundamentals.ping"
+            android:exported="false" />
+
     </application>
 
 </manifest>

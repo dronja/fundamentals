@@ -1,15 +1,17 @@
 package com.itea.practice.fundamentals.task;
 
+import android.annotation.SuppressLint;
 import android.app.ActivityManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -21,214 +23,267 @@ import androidx.core.content.ContextCompat;
 import com.itea.practice.components.PingLog;
 import com.itea.practice.fundamentals.R;
 
-import java.util.List;
-
-
+@SuppressWarnings("FieldCanBeLocal")
 public class PingDashboardActivity extends AppCompatActivity implements InternetReceiver.Listener, View.OnClickListener {
-    public final static String ACTION = "android.net.conn.CONNECTIVITY_CHANGE";
-    private String netType;
-    private final String KEY_STATE = "state.connection";
-    private final String KEY_DELAY = "state.delay";
-    private final String KEY_STATUS = "state.status";
-    private TextView outputTv;
-    private TextView ouputDelay;
+    private final String KEY_STATE_CONNECTION = "state_connection";
+    private final String KEY_STATE_STATUS = "state_status";
+    private final String KEY_STATE_DELAY = "state_delay";
+
+    private String currentConnectionType = null;
+
+    private InternetReceiver receiver;
+
+    private ImageView btnTumbler;
+    private View btnHistory;
+    private TextView outputConnection;
     private TextView outputStatus;
-    private PingBinder pingBinder;
-    private Button btnHistory;
-    private PingBinder.PingListener pingListener = new PingBinder.PingListener() {
+    private TextView outputDelay;
 
+    @SuppressLint("SetTextI18n")
+    public void updateDelay() {
+
+        Cursor cursor = getContentResolver().query(
+                PingHistoryProvider.HISTORY_URI,
+                new String[]{PingHistoryProvider.FIELD_DURATION},
+                PingHistoryProvider.SELECTION_FILTERED,
+                null,
+                null
+        );
+
+        long delaySum = 0L;
+        long commonDelay = 0L;
+        long lastDelay = 0L;
+
+        if (cursor != null && cursor.getCount() > 0) {
+            cursor.moveToFirst();
+
+            while (!cursor.isAfterLast()) {
+                long delay = cursor.getLong(0);
+
+                delaySum += delay;
+                lastDelay = delay;
+
+                cursor.moveToNext();
+            }
+            commonDelay = delaySum / cursor.getCount();
+
+            cursor.close();
+        }
+
+        outputDelay.setText(
+                lastDelay
+                        + "ms "
+                        + getString(R.string.last).toLowerCase()
+                        + "\n"
+                        + commonDelay
+                        + "ms "
+                        + getString(R.string.common).toLowerCase()
+        );
+    }
+
+    private PingServiceBinder.PingListener pingListener = new PingServiceBinder.PingListener() {
         @Override
-        public void onPing(PingLog log) {
-            ouputDelay.setText(String.valueOf(log.getDuration()));
+        public void onPing(final PingLog log) {
+            getContentResolver().insert(
+                    PingHistoryProvider.HISTORY_URI,
+                    PingHistoryProvider.logToValues(log)
+            );
+
+            updateDelay();
         }
     };
-    private PingBinder.ExecutionTypeListener typeListener = new PingBinder.ExecutionTypeListener() {
-        @Override
-        public void onStatusChange(boolean state) {
 
-            outputStatus.setText(getString(state? R.string.status_active:R.string.status_inactive));
+    private PingServiceBinder.ExecutionStateListener stateListener = new PingServiceBinder.ExecutionStateListener() {
+        @Override
+        public void onStateChanged(boolean state) {
+            outputStatus.setText(getString(state ? R.string.status_active : R.string.status_inactive));
         }
     };
-    private ImageView ivTumbler;
-    InternetReceiver receiver;
-    private ServiceConnection serviceConnection = new ServiceConnection() {
+
+    private PingServiceBinder pingBinder;
+    private ServiceConnection pingConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder binder) {
-            PingDashboardActivity.this.pingBinder = (PingBinder)binder;
+            PingDashboardActivity.this.pingBinder = (PingServiceBinder) binder;
             PingDashboardActivity.this.pingBinder.setOnPingListener(pingListener);
-            PingDashboardActivity.this.pingBinder.setTypeListener(typeListener);
+
+            pingBinder.setStateListener(stateListener);
+
+            if (currentConnectionType != null)
+                pingBinder.startPingProcess();
+
             changeIndicatorColor(R.color.accent);
-            pingBinder.startPingProcess();
         }
 
         @Override
         public void onServiceDisconnected(ComponentName name) {
-        //dead service
-            PingDashboardActivity.this.pingBinder = null;
-           changeIndicatorColor(R.color.highlight_inactive);
+            pingBinder.stopPingProcess();
+            pingBinder = null;
+
+            changeIndicatorColor(R.color.highlight_inactive);
         }
     };
-    private void changeIndicatorColor(int colorId){
-        ivTumbler.setColorFilter(
+
+    private void changeIndicatorColor(int colorId) {
+        PingDashboardActivity.this.btnTumbler.setColorFilter(
                 ContextCompat.getColor(
-                        PingDashboardActivity.this,colorId
+                        PingDashboardActivity.this,
+                        colorId
                 )
         );
     }
 
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_ping_dashboard);
-        outputTv = findViewById(R.id.output_connection);
-        ouputDelay = findViewById(R.id.output_delay);
-        outputStatus = findViewById(R.id.output_status);
-        ivTumbler = findViewById(R.id.btn_tumbler);
-        ivTumbler.setOnClickListener(this);
-        btnHistory = findViewById(R.id.btn_history);
-        btnHistory.setOnClickListener(this);
-       /* receiver = new InternetReceiver();
-        IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(ACTION);
-        this.registerReceiver(
-                receiver, intentFilter
-        );*/
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-
-        receiver = new InternetReceiver();
-        IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(ACTION);
-        this.registerReceiver(
-                receiver, intentFilter
-        );
-
-        this.receiver.addListener(this);
-
-        if(isServiceRunning())
-            bindService(new Intent(this, PingService.class), serviceConnection, 0);
-
-
-
-    }
-
-    private boolean isServiceRunning(){
-        ActivityManager manager = (ActivityManager)getSystemService(Context.ACTIVITY_SERVICE);
-
-        assert manager != null;
-        List<ActivityManager.RunningServiceInfo> listRunning = manager.getRunningServices(Integer.MAX_VALUE);
-
-        for(ActivityManager.RunningServiceInfo info : listRunning){
-            if(info.service.getClassName().equalsIgnoreCase(PingService.class.getName())){
-                return true;
-            }
-        }
-        return false;
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        this.receiver.removeListener(this);
-        this.unregisterReceiver(receiver);
-        if(isServiceRunning())
-            this.unbindService(serviceConnection);
-    }
-
-
     @Override
     protected void onSaveInstanceState(@NonNull Bundle state) {
+        state.putString(KEY_STATE_CONNECTION, outputConnection.getText().toString());
+        state.putString(KEY_STATE_STATUS, outputStatus.getText().toString());
+        state.putString(KEY_STATE_DELAY, outputDelay.getText().toString());
+
         super.onSaveInstanceState(state);
-        state.putString(KEY_STATE, outputTv.getText().toString());
-        state.putString(KEY_DELAY, ouputDelay.getText().toString());
-        state.putString(KEY_STATUS, outputStatus.getText().toString());
     }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_ping_dashboard);
 
+        this.outputConnection = findViewById(R.id.output_connection);
+        this.outputStatus = findViewById(R.id.output_status);
+        this.outputDelay = findViewById(R.id.output_delay);
 
-    }
+        this.btnTumbler = findViewById(R.id.btn_tumbler);
+        this.btnTumbler.setOnClickListener(this);
 
-    @Override
-    protected void onRestoreInstanceState(@NonNull Bundle state) {
-        super.onRestoreInstanceState(state);
-        String sDefault = getString(R.string.connection_none);
-
-            outputTv.setText(state.getString(KEY_STATE, sDefault));
-            outputStatus.setText(state.getString(KEY_STATUS, sDefault));
-            ouputDelay.setText(state.getString(KEY_DELAY, "0"));
-
+        this.btnHistory = findViewById(R.id.btn_history);
+        this.btnHistory.setOnClickListener(this);
     }
 
     @Override
     protected void onPostCreate(@Nullable Bundle state) {
         super.onPostCreate(state);
 
-       /* String sDefault = getString(R.string.connection_none);
-        if(state!= null){
-            outputTv.setText(state.getString(KEY_STATE, sDefault));
-            outputStatus.setText(state.getString(KEY_STATUS, sDefault));
-            ouputDelay.setText(state.getString(KEY_DELAY, "0"));
-        }*/
+        if (state != null) {
+            this.outputConnection.setText(
+                    state.getString(
+                            KEY_STATE_CONNECTION,
+                            getString(R.string.connection_none)
+                    )
+            );
 
+            this.outputConnection.setText(
+                    state.getString(
+                            KEY_STATE_STATUS,
+                            getString(R.string.status_inactive)
+                    )
+            );
 
+            this.outputConnection.setText(
+                    state.getString(
+                            KEY_STATE_DELAY,
+                            "0"
+                    )
+            );
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        this.receiver = new InternetReceiver();
+        IntentFilter filter = new IntentFilter();
+        filter.addAction("android.net.conn.CONNECTIVITY_CHANGE");
+
+        this.registerReceiver(receiver, filter);
+        this.receiver.addListener(this);
+
+        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+
+        assert manager != null;
+        for (ActivityManager.RunningServiceInfo info : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if (info.service.getClassName().equals(PingService.class.getName())) {
+                PingDashboardActivity.this.bindService(
+                        new Intent(PingDashboardActivity.this, PingService.class),
+                        pingConnection,
+                        0
+                );
+                break;
+            }
+        }
+
+        updateDelay();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        this.receiver.removeListener(this);
+        this.unregisterReceiver(this.receiver);
+
+        if (pingBinder != null) {
+            this.unbindService(pingConnection);
+        }
     }
 
     @Override
     public void onInternetChanged(@Nullable String type) {
-        //TODO fix this code and replace on listener
-       /* boolean isActive = pingBinder.isStarted();
+        if (currentConnectionType == null && type == null) return;
 
+        if (currentConnectionType == null) {
 
-        if(type == null && netType == null){
-            return;
+            currentConnectionType = type;
+            outputConnection.setText(type);
+
+            if (pingBinder != null && !pingBinder.isActive()) {
+                pingBinder.startPingProcess();
+            }
+
+        } else if (type == null) {
+            currentConnectionType = null;
+            outputConnection.setText(getString(R.string.connection_none));
+
+            if (pingBinder != null && pingBinder.isActive()) {
+                pingBinder.stopPingProcess();
+            }
+
+        } else if (!currentConnectionType.equals(type)) {
+
+            currentConnectionType = type;
+            outputConnection.setText(type);
+
         }
-        if(type == null){
-            pingBinder.stopPingService();
-        }
 
-
-        if(pingBinder == null)return;
-        if(type == null){
-            pingBinder.stopPingService();
-        }else{
-            pingBinder.startPingProcess();
-        }*/
-
-        outputTv.setText(
-                type==null?getString(R.string.connection_none):type
-        );
     }
 
     @Override
-    public void onClick(View v) {
-        switch (v.getId()){
+    public void onClick(View view) {
+        switch (view.getId()) {
             case R.id.btn_tumbler:
-                Intent intent = new Intent(this, PingService.class);
-                if(pingBinder == null) {
-                    startService(intent);
-                    bindService(intent, serviceConnection, 0);
 
-                }else{
-                    pingBinder.stopPingService();
-                    unbindService(PingDashboardActivity.this.serviceConnection);
-                    pingBinder = null;
-                    stopService(intent);
-                    changeIndicatorColor(R.color.highlight_inactive);
+                if (this.pingBinder == null) {
+
+                    this.startService(new Intent(this, PingService.class));
+                    this.bindService(
+                            new Intent(this, PingService.class),
+                            this.pingConnection,
+                            0
+                    );
+
+                } else {
+
+                    this.pingBinder.stopPingProcess();
+                    this.unbindService(pingConnection);
+                    this.pingBinder = null;
+                    this.changeIndicatorColor(R.color.highlight_inactive);
+
+                    this.stopService(new Intent(PingDashboardActivity.this, PingService.class));
 
                 }
+
                 break;
             case R.id.btn_history:
                 startActivity(new Intent(this, PingHistoryActivity.class));
-                break;
-
-            default:
                 break;
         }
     }

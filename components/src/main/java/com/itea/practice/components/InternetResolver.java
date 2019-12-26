@@ -9,7 +9,6 @@ import androidx.annotation.Nullable;
 import java.util.Objects;
 
 public class InternetResolver {
-
     private ConnectivityManager manager;
 
     public InternetResolver(Context context) {

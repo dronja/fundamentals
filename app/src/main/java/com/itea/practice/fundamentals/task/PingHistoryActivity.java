@@ -13,4 +13,5 @@ public class PingHistoryActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_ping_history);
     }
+
 }

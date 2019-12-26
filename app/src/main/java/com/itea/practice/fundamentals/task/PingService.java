@@ -3,92 +3,77 @@ package com.itea.practice.fundamentals.task;
 import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
-import android.util.Log;
 
+import androidx.annotation.Nullable;
+
+import com.itea.practice.components.PingCallBack;
 import com.itea.practice.components.PingExecutor;
 import com.itea.practice.components.PingLog;
 
-//IntentService - one time service
 public class PingService extends Service {
-    String TAG = "pingService";
+    private PingExecutor executor;
+    private PingServiceBinder binder;
 
-    private PingExecutor pingExecutor;
-    private PingBinder pingBinder;
-    private PingExecutor.CallBack callBack = new PingExecutor.CallBack() {
+    private PingCallBack callBack = new PingCallBack() {
         @Override
         public void onSuccess(long started, long finished) {
-            Log.d(TAG, "Success");
-            if(pingBinder != null)
-           pingBinder.onPing(new PingLog(true, finished-started,started));
+            if (binder != null) {
+                binder.onPing(new PingLog(true, finished - started, started));
+            }
         }
 
         @Override
         public void onFailure(long started, long finished) {
-            Log.d(TAG, "Failure");
-            if(pingBinder != null)
-            pingBinder.onPing(new PingLog(false, finished-started, started));
+            if (binder != null) {
+                binder.onPing(new PingLog(false, finished - started, started));
+            }
         }
     };
-    public PingService() {
-    }
-
-    @Override
-    public IBinder onBind(Intent intent) {
-        Log.d(TAG, "Bind");
-        if(pingBinder == null){
-            pingBinder = new PingBinder() {
-                @Override
-                void startPingProcess() {
-                    super.startPingProcess();
-                    pingExecutor.execute(callBack, "8.8.8.8");
-                }
-
-                @Override
-                void stopPingService() {
-                    super.stopPingService();
-                    pingExecutor.interrupt();
-                }
-
-                @Override
-                boolean isStarted() {
-                    return pingExecutor.isStarted();
-                }
-            };
-        }
-       return pingBinder;
-    }
-
-    @Override
-    public boolean onUnbind(Intent intent) {
-        Log.d(TAG, "Unbind");
-
-        return super.onUnbind(intent);
-    }
 
     @Override
     public void onCreate() {
-        Log.d(TAG, "Create");
+        this.executor = new PingExecutor();
+
         super.onCreate();
-        pingExecutor = new PingExecutor();
-
-    }
-
-    @Override
-    public void onDestroy() {
-        Log.d(TAG, "Destroy");
-        super.onDestroy();
-
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Log.d(TAG, "Start");
         return START_NOT_STICKY;
+    }
+
+    @Nullable
+    @Override
+    public IBinder onBind(Intent intent) {
+        if (binder == null) {
+            binder = new PingServiceBinder() {
+                @Override
+                boolean isActive() {
+                    return executor.isActive();
+                }
+
+                @Override
+                void startPingProcess() {
+                    super.startPingProcess();
+
+                    executor.execute(callBack);
+                }
+
+                @Override
+                void stopPingProcess() {
+                    super.stopPingProcess();
+
+                    executor.interrupt();
+                }
+            };
+        }
+
+        return binder;
     }
 
     @Override
     public void onTaskRemoved(Intent rootIntent) {
-        Log.d(TAG, "Task remove");
         super.onTaskRemoved(rootIntent);
     }
+
 }
